@@ -1,0 +1,61 @@
+:root {
+    --primary-color: #d4a373; /* Sophisticated Gold/Tan */
+    --accent-color: #faedcd;
+    --text-dark: #2d2d2d;
+    --bg-light: #fefae0;
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #fafafa;
+    color: var(--text-dark);
+}
+
+h1, h2, .navbar-brand {
+    font-family: 'Playfair Display', serif;
+}
+
+/* Service Card Styling */
+.service-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: var(--transition);
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(212, 163, 115, 0.2);
+}
+
+.service-price {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+/* Form Styling - Premium Look */
+.form-control {
+    border: 1px solid #e0e0e0;
+    padding: 12px 15px;
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(212, 163, 115, 0.1);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 12px 25px;
+}
+
+.btn-primary:hover {
+    background-color: #bc8a5f;
+}
