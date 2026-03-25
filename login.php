@@ -4,10 +4,13 @@ session_start();
 
 // Redirect if already logged in
 if (isset($_SESSION["id"]) && isset($_SESSION["usertype"])) {
-    header("Location: " . (
-        $_SESSION["usertype"] == "ngo" ? "ngo/ngo_dashboard.php" :
-        ($_SESSION["usertype"] == "team_member" ? "team/team_dashboard.php" : "dashboard.php")
-    ));
+    $redirects = [
+        "ngo" => "ngo/ngo_dashboard.php",
+        "team_member" => "team/team_dashboard.php",
+        "counselor" => "counselor/counselor_dashboard.php",
+        "user" => "dashboard.php"
+    ];
+    header("Location: " . ($redirects[$_SESSION["usertype"]] ?? "dashboard.php"));
     exit();
 }
 
@@ -25,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($email_err) && empty($password_err) && empty($usertype_err)) {
         
-        // Map table, columns, dashboard dynamically
+        // Map table, columns, dashboard dynamically based on your database schema
         switch ($usertype) {
             case "user":
                 $table = "users";
@@ -48,7 +51,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $id_col = "team_member_id";
                 $pass_col = "password_hash";
                 $name_col = "full_name";
-                $dashboard = "team/team_dashboard.php"; // create this page for team members
+                $dashboard = "team/team_dashboard.php";
+                break;
+
+            case "counselor":
+                $table = "counselors";
+                $id_col = "id";
+                $pass_col = "password"; // As per your CREATE TABLE counselors schema
+                $name_col = "full_name";
+                $dashboard = "counselor/counselor_dashboard.php";
                 break;
 
             default:
@@ -57,7 +68,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         if ($table) {
-            $sql = "SELECT $id_col, $name_col, email, $pass_col FROM $table WHERE email = ? AND is_active = 1";
+            // Check for is_active column (Counselors table doesn't have it in your schema, others do)
+            $active_clause = ($usertype !== 'counselor') ? " AND is_active = 1" : "";
+            
+            $sql = "SELECT $id_col, $name_col, email, $pass_col FROM $table WHERE email = ?$active_clause";
+            
             if ($stmt = mysqli_prepare($conn, $sql)) {
                 mysqli_stmt_bind_param($stmt, "s", $email);
                 if (mysqli_stmt_execute($stmt)) {
@@ -74,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 exit();
                             } else { $password_err = "Invalid password."; }
                         }
-                    } else { $email_err = "No active account found with this email."; }
+                    } else { $email_err = "No account found with this email."; }
                 }
                 mysqli_stmt_close($stmt);
             }
@@ -88,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Login</title>
+<title>Login | Heal2Rise</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -101,7 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 .login-header h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: #2d2d2d; }
 .input-group-custom { position: relative; margin-bottom: 20px; }
 .input-group-custom label { font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; display: block; color: #555; }
-.input-group-custom i { position: absolute; left: 15px; top: 42px; color: var(--primary-color); opacity: 0.8; }
+.input-group-custom i { position: absolute; left: 15px; top: 42px; color: var(--primary-color); opacity: 0.8; z-index: 10; }
 .input-group-custom .form-control, .input-group-custom select { padding-left: 45px; height: 50px; border-radius: 12px; border: 1px solid #eee; background: #fcfcfc; }
 .error-msg { color: #dc3545; font-size: 0.8rem; margin-top: 5px; font-weight: 500; }
 .btn-login { background-color: var(--primary-color); color: white; width: 100%; padding: 12px; border-radius: 12px; font-weight: 600; border: none; transition: all 0.3s ease; margin-top: 10px; }
@@ -115,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="login-wrapper">
     <div class="login-card">
         <div class="login-header">
-            <i class="fas fa-magic fa-2x mb-3 text-primary"></i>
+            <i class="fas fa-shield-heart fa-2x mb-3 text-primary"></i>
             <h2>Welcome Back</h2>
             <p class="text-muted">Login to continue</p>
         </div>
@@ -127,8 +142,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <select name="usertype" class="form-control">
                     <option value="">-- Select Type --</option>
                     <option value="user" <?php if($usertype=="user") echo "selected"; ?>>Individual User</option>
-                    <option value="ngo" <?php if($usertype=="ngo") echo "selected"; ?>>NGO</option>
+                    <option value="ngo" <?php if($usertype=="ngo") echo "selected"; ?>>NGO Admin</option>
                     <option value="team_member" <?php if($usertype=="team_member") echo "selected"; ?>>Team Member</option>
+                    <option value="counselor" <?php if($usertype=="counselor") echo "selected"; ?>>Professional Counselor</option>
                 </select>
                 <div class="error-msg"><?php echo $usertype_err; ?></div>
             </div>

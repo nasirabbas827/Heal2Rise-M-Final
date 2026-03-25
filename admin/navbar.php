@@ -38,6 +38,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <li class="nav-item px-1">
+                    <a class="nav-link <?= ($current_page == 'manage_counselors..php') ? 'active text-warning' : '' ?>" href="manage_counselors.php">
+                        Counselors
+                    </a>
+                </li>
+                <li class="nav-item px-1">
                     <a class="nav-link <?= ($current_page == 'manage_cases.php') ? 'active text-warning' : '' ?>" href="manage_cases.php">
                         Connect Cases
                     </a>

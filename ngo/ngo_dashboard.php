@@ -147,12 +147,7 @@ $cases_result = mysqli_stmt_get_result($cases_query);
                                             <a href="ngo_case_details.php?case_id=<?= $case['case_id'] ?>" class="btn btn-sm btn-outline-dark" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="manage_counselling_session.php?case_id=<?= $case['case_id'] ?>" class="btn btn-sm btn-outline-dark" title="Counselling">
-                                                <i class="fas fa-comments"></i>
-                                            </a>
-                                            <a href="manage_skills.php?case_id=<?= $case['case_id'] ?>" class="btn btn-sm btn-outline-dark" title="Skill Training">
-                                                <i class="fas fa-tools"></i>
-                                            </a>
+                                            
                                         </div>
                                     </td>
                                 </tr>

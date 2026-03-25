@@ -74,12 +74,7 @@ $cases = mysqli_fetch_all($result, MYSQLI_ASSOC);
                         <a href="ngo_case_details.php?case_id=<?= $case['case_id'] ?>" class="btn btn-sm btn-primary mb-1">
                             <i class="fas fa-eye"></i> View Details
                         </a>
-                        <a href="manage_counselling_session.php?case_id=<?= $case['case_id'] ?>" class="btn btn-sm btn-warning mb-1">
-                            <i class="fas fa-user-md"></i> Manage Counselling
-                        </a>
-                        <a href="manage_skills.php?case_id=<?= $case['case_id'] ?>" class="btn btn-sm btn-success mb-1">
-                            <i class="fas fa-graduation-cap"></i> Manage Skills
-                        </a>
+                        
                     </td>
                 </tr>
                 <?php endforeach; ?>

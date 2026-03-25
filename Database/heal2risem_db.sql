@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 14, 2026 at 07:36 AM
+-- Generation Time: Mar 25, 2026 at 08:41 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -51,11 +51,12 @@ CREATE TABLE `cases` (
   `user_id` int(11) NOT NULL,
   `ngo_id` int(11) DEFAULT NULL,
   `team_member_id` int(11) DEFAULT NULL,
+  `counselor_id` int(11) DEFAULT NULL,
   `case_title` varchar(150) DEFAULT NULL,
   `issue_category` varchar(100) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `start_date` date NOT NULL,
-  `status` enum('open','in_progress','rehabilitation','closed','rejected') DEFAULT 'open',
+  `status` enum('open','in_progress','rehabilitation','closed','rejected','completed') DEFAULT 'open',
   `closure_date` date DEFAULT NULL,
   `closure_reason` text DEFAULT NULL,
   `assigned_date` datetime DEFAULT current_timestamp(),
@@ -66,9 +67,11 @@ CREATE TABLE `cases` (
 -- Dumping data for table `cases`
 --
 
-INSERT INTO `cases` (`case_id`, `user_id`, `ngo_id`, `team_member_id`, `case_title`, `issue_category`, `description`, `start_date`, `status`, `closure_date`, `closure_reason`, `assigned_date`, `last_updated`) VALUES
-(1, 1, 1, 1, 'One', 'Advocacy', 'fdsa', '2026-02-14', 'closed', '2026-02-21', 'Noti', '2026-02-14 10:39:32', '2026-02-14 11:32:28'),
-(2, 1, NULL, NULL, 'fads', 'Financial', 'sacxz', '2026-02-14', 'open', NULL, NULL, '2026-02-14 11:31:55', '2026-02-14 11:31:55');
+INSERT INTO `cases` (`case_id`, `user_id`, `ngo_id`, `team_member_id`, `counselor_id`, `case_title`, `issue_category`, `description`, `start_date`, `status`, `closure_date`, `closure_reason`, `assigned_date`, `last_updated`) VALUES
+(1, 1, 1, 1, NULL, 'One', 'Advocacy', 'fdsa', '2026-02-14', 'closed', '2026-02-21', 'Noti', '2026-02-14 10:39:32', '2026-02-14 11:32:28'),
+(2, 1, NULL, NULL, NULL, 'fads', 'Financial', 'sacxz', '2026-02-14', 'open', NULL, NULL, '2026-02-14 11:31:55', '2026-02-14 11:31:55'),
+(3, 1, 1, 1, NULL, 'Video', 'Education', 'XYZ', '2026-02-28', 'open', NULL, NULL, '2026-02-28 21:32:48', '2026-02-28 21:33:18'),
+(4, 1, 1, 1, 1, 'Prototype', 'Education', 'XYZ', '2026-03-25', 'completed', '2026-03-25', NULL, '2026-03-25 11:51:02', '2026-03-25 12:32:08');
 
 -- --------------------------------------------------------
 
@@ -116,7 +119,31 @@ CREATE TABLE `counseling_sessions` (
 --
 
 INSERT INTO `counseling_sessions` (`session_id`, `case_id`, `session_date`, `counselor_name`, `duration_minutes`, `notes`, `attended`, `next_suggested_date`, `created_at`) VALUES
-(1, 1, '2026-02-14 10:48:00', 'Haider', 45, 'fdsa', 1, '2026-02-20', '2026-02-14 10:48:35');
+(1, 1, '2026-02-14 10:48:00', 'Haider', 45, 'fdsa', 1, '2026-02-20', '2026-02-14 10:48:35'),
+(2, 4, '2026-03-25 08:18:00', 'Haider Ali', 45, 'XYZdd', 1, NULL, '2026-03-25 12:18:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `counselors`
+--
+
+CREATE TABLE `counselors` (
+  `id` int(11) NOT NULL,
+  `full_name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `specialization` varchar(100) DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `counselors`
+--
+
+INSERT INTO `counselors` (`id`, `full_name`, `email`, `phone`, `specialization`, `password`, `created_at`) VALUES
+(1, 'Haider Ali', 'haider@gmail.com', '03266029053', 'Depression', '$2y$10$D3MvI65tIgMhnxIy5WU7We3UP/PtJ9bNkxaCMhEqFY7LHMDMwnxFe', '2026-03-25 06:56:50');
 
 -- --------------------------------------------------------
 
@@ -169,7 +196,8 @@ CREATE TABLE `skill_development` (
 --
 
 INSERT INTO `skill_development` (`skill_id`, `case_id`, `skill_name`, `start_date`, `target_date`, `completion_date`, `status`, `notes`) VALUES
-(1, 1, 'fds', '2026-02-14', '2026-02-28', '2026-03-03', 'planned', 'afdsa');
+(1, 1, 'fds', '2026-02-14', '2026-02-28', '2026-03-03', 'planned', 'afdsa'),
+(2, 4, 'XYZ', '2026-03-25', '2026-04-02', NULL, 'planned', 'adsfd');
 
 -- --------------------------------------------------------
 
@@ -259,6 +287,13 @@ ALTER TABLE `counseling_sessions`
   ADD KEY `case_id` (`case_id`);
 
 --
+-- Indexes for table `counselors`
+--
+ALTER TABLE `counselors`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
 -- Indexes for table `ngos`
 --
 ALTER TABLE `ngos`
@@ -304,7 +339,7 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `cases`
 --
 ALTER TABLE `cases`
-  MODIFY `case_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `case_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `case_progress`
@@ -316,7 +351,13 @@ ALTER TABLE `case_progress`
 -- AUTO_INCREMENT for table `counseling_sessions`
 --
 ALTER TABLE `counseling_sessions`
-  MODIFY `session_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `session_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `counselors`
+--
+ALTER TABLE `counselors`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `ngos`
@@ -328,7 +369,7 @@ ALTER TABLE `ngos`
 -- AUTO_INCREMENT for table `skill_development`
 --
 ALTER TABLE `skill_development`
-  MODIFY `skill_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `skill_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `team_members`
